@@ -16,6 +16,10 @@
     {
       "src": "script.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "analyse.xml",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
