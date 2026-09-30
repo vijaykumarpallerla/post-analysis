@@ -15,7 +15,7 @@ load_dotenv()
 
 # Setup Supabase client
 raw_db_url = os.environ.get("Data_base_url", "")
-db_password = os.environ.get("YOUR-PASSWORD", "")
+db_password = os.environ.get("DB_PASSWORD", "")
 db_url = raw_db_url.replace("[YOUR-PASSWORD]", db_password)
 
 project_ref = raw_db_url.split('@db.')[1].split('.supabase.co')[0]
@@ -23,7 +23,7 @@ supabase_url = f"https://{project_ref}.supabase.co"
 supabase_key = os.environ.get("Suphabase_service_key")
 supabase: Client = create_client(supabase_url, supabase_key)
 
-API_KEY = os.environ.get("X-Agent_Key")
+API_KEY = os.environ.get("X_AGENT_KEY")
 
 def require_api_key(f):
     @wraps(f)
