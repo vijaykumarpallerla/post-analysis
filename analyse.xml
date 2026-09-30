@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api_documentation>
+    <api_configuration>
+        <base_url>[INSERT_YOUR_PRODUCTION_API_URL_HERE]</base_url>
+        <authentication>
+            <type>Header</type>
+            <key>X-Agent-Key</key>
+            <value>[INSERT_YOUR_X_AGENT_KEY_HERE]</value>
+        </authentication>
+    </api_configuration>
+
+    <endpoints>
+        <endpoint>
+            <method>GET</method>
+            <path>/api/public/posts/latest</path>
+            <description>Fetch the most recent posts.</description>
+            <parameters>
+                <param name="limit" type="query" default="5">Number of posts to return</param>
+            </parameters>
+        </endpoint>
+        <endpoint>
+            <method>GET</method>
+            <path>/api/public/posts</path>
+            <description>Fetch posts by specific date or date range.</description>
+            <parameters>
+                <param name="date" type="query">Specific date (YYYY-MM-DD)</param>
+                <param name="from" type="query">Start date for range (YYYY-MM-DD)</param>
+                <param name="to" type="query">End date for range (YYYY-MM-DD)</param>
+                <param name="limit" type="query" default="30">Max posts to return</param>
+            </parameters>
+        </endpoint>
+        <endpoint>
+            <method>GET</method>
+            <path>/api/public/posts/{post_id}</path>
+            <description>Fetch details for a specific post (includes the post_metrics history embedded in the response).</description>
+        </endpoint>
+    </endpoints>
+
+    <usage_example>
+        <![CDATA[
+        Example of how to use the API:
+        1. Set the X-Agent-Key header with your API key.
+        2. Make a GET request to [INSERT_YOUR_PRODUCTION_API_URL_HERE]/api/public/posts/latest?limit=10
+        3. The response will contain the posts, and inside each post, you will find a 'post_metrics' array containing all the historical stats over time!
+        ]]>
+    </usage_example>
+</api_documentation>

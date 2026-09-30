@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Analysis Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div class="logo">
+                <i class="fa-brands fa-linkedin"></i>
+                <h1>Analysis Hub</h1>
+            </div>
+            <button id="addPostBtn" class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Post
+            </button>
+        </header>
+
+        <main class="content">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h2>No posts analyzed yet</h2>
+                <p>Click the "Add Post" button to start your analysis.</p>
+            </div>
+            
+            <div id="postsContainer" class="posts-container"></div>
+        </main>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="postModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <button id="closeModalBtn" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="postText" placeholder="What do you want to talk about?"></textarea>
+                
+                <textarea id="mediaDescription" placeholder="Explain the media/video for later AI analysis (Optional)" style="margin-top: 12px; min-height: 50px; font-size: 13px; background-color: #f9fafb;"></textarea>
+                
+                <!-- Hidden file input -->
+                <input type="file" id="imageInput" accept="image/*" hidden>
+                <input type="file" id="documentInput" accept=".pdf,.doc,.docx,.txt" hidden>
+                
+                <div class="modal-toolbar">
+                    <div class="modal-actions">
+                        <button id="imageBtn" class="btn-action tooltip" data-tooltip="Add Image">
+                            <i class="fa-regular fa-image"></i>
+                        </button>
+                        <button id="documentBtn" class="btn-action tooltip" data-tooltip="Add Document">
+                            <i class="fa-regular fa-file-lines"></i>
+                        </button>
+                    </div>
+
+                    <div class="post-datetime-container">
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="date" id="postDate" class="datetime-input" title="Post Date">
+                        <div class="datetime-separator"></div>
+                        <i class="fa-regular fa-clock"></i>
+                        <input type="time" id="postTime" class="datetime-input" title="Post Time">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitPostBtn" class="btn-submit" disabled>Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics Modal Overlay -->
+    <div id="metricsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Log Performance Stats</h2>
+                <button id="closeMetricsModalBtn" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="metrics-grid">
+                    <div class="metric-input-group">
+                        <label for="metricReactions"><i class="fa-regular fa-thumbs-up"></i> Reactions</label>
+                        <input type="number" id="metricReactions" min="0" placeholder="0">
+                    </div>
+                    <div class="metric-input-group">
+                        <label for="metricComments"><i class="fa-regular fa-comment"></i> Comments</label>
+                        <input type="number" id="metricComments" min="0" placeholder="0">
+                    </div>
+                    <div class="metric-input-group">
+                        <label for="metricReposts"><i class="fa-solid fa-retweet"></i> Reposts</label>
+                        <input type="number" id="metricReposts" min="0" placeholder="0">
+                    </div>
+                    <div class="metric-input-group">
+                        <label for="metricImpressions"><i class="fa-regular fa-eye"></i> Impressions</label>
+                        <input type="number" id="metricImpressions" min="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="post-datetime-container" style="margin-top: 16px;">
+                    <i class="fa-regular fa-calendar"></i>
+                    <input type="date" id="metricDate" class="datetime-input" title="Observation Date">
+                    <div class="datetime-separator"></div>
+                    <i class="fa-regular fa-clock"></i>
+                    <input type="time" id="metricTime" class="datetime-input" title="Observation Time">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitMetricsBtn" class="btn-submit">Save Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics History Modal -->
+    <div id="metricsHistoryModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Stats History</h2>
+                <button id="closeMetricsHistoryBtn" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                <table class="history-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th><i class="fa-regular fa-thumbs-up" title="Reactions"></i></th>
+                            <th><i class="fa-regular fa-comment" title="Comments"></i></th>
+                            <th><i class="fa-solid fa-retweet" title="Reposts"></i></th>
+                            <th><i class="fa-regular fa-eye" title="Impressions"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Data will go here -->
+                    </tbody>
+                </table>
+                <div id="noHistoryMessage" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                    No stats logged yet.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
