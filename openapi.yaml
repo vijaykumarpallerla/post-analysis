@@ -1,0 +1,192 @@
+openapi: 3.0.3
+
+info:
+  title: LinkedIn Post Analysis API
+  description: API for retrieving LinkedIn posts, media context, and historical performance metrics.
+  version: 1.0.0
+
+servers:
+  - url: https://post-analysis.vercel.app
+
+security:
+  - AgentKey: []
+
+paths:
+
+  /api/public/posts/latest:
+    get:
+      operationId: getLatestPosts
+      summary: Get latest LinkedIn posts
+      description: Fetch the user's most recent LinkedIn posts with their full historical metrics.
+      parameters:
+        - name: limit
+          in: query
+          description: Number of posts to return.
+          required: false
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 30
+      responses:
+        "200":
+          description: Latest posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostsListResponse"
+        "401":
+          description: Unauthorized
+
+  /api/public/posts:
+    get:
+      operationId: getPostsByDate
+      summary: Get LinkedIn posts by date
+      description: Fetch LinkedIn posts filtered by a specific date or date range.
+      parameters:
+        - name: date
+          in: query
+          description: Specific date in YYYY-MM-DD format.
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: from
+          in: query
+          description: Start date in YYYY-MM-DD format.
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          description: End date in YYYY-MM-DD format.
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Maximum number of posts to return.
+          required: false
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Matching posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostsListResponse"
+        "401":
+          description: Unauthorized
+
+  /api/public/posts/{post_id}:
+    get:
+      operationId: getPostById
+      summary: Get a specific LinkedIn post
+      description: Fetch complete post information including text, media, and all historical metrics.
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          description: Unique post identifier.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Complete post details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SinglePostResponse"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Post not found
+
+components:
+  securitySchemes:
+    AgentKey:
+      type: apiKey
+      in: header
+      name: X-Agent-Key
+
+  schemas:
+    PostsListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+
+    SinglePostResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/Post"
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the LinkedIn post.
+        created_at:
+          type: string
+          format: date-time
+        posted_at:
+          type: string
+          format: date-time
+        text:
+          type: string
+          description: The main content of the post.
+        image_url:
+          type: string
+          format: uri
+          nullable: true
+        document_url:
+          type: string
+          format: uri
+          nullable: true
+        media_description:
+          type: string
+          nullable: true
+          description: AI or manual context describing the image or document content.
+        post_metrics:
+          type: array
+          description: Historical metric snapshots over time for this post.
+          items:
+            $ref: "#/components/schemas/MetricSnapshot"
+
+    MetricSnapshot:
+      type: object
+      properties:
+        id:
+          type: integer
+        post_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        observed_at:
+          type: string
+          format: date-time
+        reactions:
+          type: integer
+        comments:
+          type: integer
+        reposts:
+          type: integer
+        impressions:
+          type: integer

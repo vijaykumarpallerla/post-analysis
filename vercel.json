@@ -20,6 +20,10 @@
     {
       "src": "analyse.xml",
       "use": "@vercel/static"
+    },
+    {
+      "src": "openapi.yaml",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
