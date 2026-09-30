@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchPosts = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/posts');
+            const res = await fetch('/api/posts');
             const result = await res.json();
             if (result.status === 'success') {
                 renderPosts(result.data);
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Are you sure you want to delete this post?')) return;
         
         try {
-            const res = await fetch(`http://localhost:5000/api/posts/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
             const result = await res.json();
             if (result.status === 'success') {
                 fetchPosts();
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         noHistoryMessage.style.display = 'none';
         
         try {
-            const res = await fetch(`http://localhost:5000/api/posts/${postId}/metrics`);
+            const res = await fetch(`/api/posts/${postId}/metrics`);
             const result = await res.json();
             
             if (result.status === 'success') {
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         try {
-            const res = await fetch(`http://localhost:5000/api/posts/${currentMetricsPostId}/metrics`, {
+            const res = await fetch(`/api/posts/${currentMetricsPostId}/metrics`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -391,10 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (hasImage) formData.append('image', imageInput.files[0]);
                 if (hasDoc) formData.append('document', documentInput.files[0]);
 
-                let url = 'http://localhost:5000/api/posts';
+                let url = '/api/posts';
                 let method = 'POST';
                 if (editingPostId) {
-                    url = `http://localhost:5000/api/posts/${editingPostId}`;
+                    url = `/api/posts/${editingPostId}`;
                     method = 'PUT';
                 }
 
